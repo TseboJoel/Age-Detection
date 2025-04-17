@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Age & Gender Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color:rgb(21, 37, 72); /* dark black-ish background */
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 700px;
+        }
+
+        .card {
+            background-color: #1e1e1e; /* dark card */
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-body {
+            padding: 40px;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0a58ca;
+        }
+
+        .result-img {
+            max-width: 100%;
+            border-radius: 15px;
+            border: 3px solid #dee2e6;
+            margin-top: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .result-img:hover {
+            transform: scale(1.02);
+        }
+
+        .message {
+            color: #ff5252;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        h2, h3 {
+            color:rgb(50, 111, 39);
+        }
+
+        .text-muted {
+            color: #ccc !important;
+        }
+
+        .navbar-dark .navbar-brand {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-black fixed-top py-3">
+    <div class="container">
+        <a class="navbar-brand" href="#">Age & Gender Detection</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4 text-white fw-bold text-uppercase">
+                Upload an Image for Detection
+            </h2>
+            
+            <form method="POST" enctype="multipart/form-data" class="text-center" onsubmit="return validateFileSize()">
+                <div class="mb-3">
+                    <input type="file" class="form-control form-control-lg" name="image" id="imageInput" required>
+                    <p id="fileSizeInfo" class="text-muted small mt-2"></p>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg px-5">Upload</button>
+            </form>
+
+            {% if message %}
+                <p class="text-center mt-3 message">{{ message }}</p>
+            {% endif %}
+
+            {% if uploaded_image %}
+                <h3 class="text-center mt-5">Detection Result:</h3>
+                <div class="text-center">
+                    <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" class="result-img shadow-sm">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function validateFileSize() {
+        const fileInput = document.getElementById('imageInput');
+        const file = fileInput.files[0];
+
+        if (file && file.size > 25 * 1024 * 1024) {
+            alert("Yowza, that’s a big file. Please upload a file smaller than 25MB.");
+            return false;
+        }
+        return true;
+    }
+
+    document.getElementById('imageInput').addEventListener('change', function () {
+        const file = this.files[0];
+        const sizeInfo = document.getElementById('fileSizeInfo');
+        if (file) {
+            let sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            sizeInfo.textContent = `Selected file size: ${sizeMB} MB`;
+        } else {
+            sizeInfo.textContent = '';
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
